@@ -52,6 +52,7 @@ If you see an error:
 
 - Make sure **MySQL is running** in XAMPP.
 - Double-check username, password, and database name.
+- On Mac XAMPP, if setup cannot save `config.local.php`, make the folder writable before installing: `chmod -R 777 /Applications/XAMPP/xamppfiles/htdocs/yourlms`
 - On Mac, if uploads fail later, you may need to allow write access to the `uploads` folder (see troubleshooting below).
 
 ---
@@ -99,6 +100,7 @@ YourLMS works on `localhost` without any extra setup. When you want a real domai
 |---------|----------|
 | Blank page or “connection refused” | Start Apache in XAMPP |
 | Database error on install | Start MySQL in XAMPP |
+| “Could not write config.local.php” | On Mac XAMPP: `chmod -R 777 /Applications/XAMPP/xamppfiles/htdocs/yourlms` then try again |
 | File uploads don’t work | Set `uploads` folder permissions to writable (777 on Mac XAMPP if needed) |
 | Wrong URL | Folder name must match **Site address path** on the setup form (default `/yourlms`) |
 | Wrong database password | Edit `config.local.php` → `db` section, or re-run setup after removing `.setup-complete` |

@@ -49,6 +49,10 @@ function install_check_environment(?array $config = null): array
     if (!is_writable($uploads)) {
         $errors[] = 'The uploads/ folder must be writable by the web server.';
     }
+    $root = dirname(__DIR__);
+    if (!is_writable($root)) {
+        $errors[] = 'The YourLMS folder must be writable so setup can save config.local.php (on Mac XAMPP, try chmod 775 on the folder).';
+    }
     if (db_is_sqlite($config)) {
         $dataDir = dirname(db_sqlite_path($config));
         if (!is_dir($dataDir)) {
@@ -160,10 +164,9 @@ function install_mysql_setup(array $config): array
             $localOverrides['base_url'] = $config['base_url'];
         }
         if (!install_merge_config_local($localOverrides)) {
-            $errors[] = 'Could not write config.local.php — check that this folder is writable.';
-        } else {
-            $messages[] = 'Database credentials saved to config.local.php.';
+            throw new RuntimeException('Could not write config.local.php — the YourLMS folder must be writable by the web server.');
         }
+        $messages[] = 'Database credentials saved to config.local.php.';
 
         file_put_contents(dirname(__DIR__) . '/.setup-complete', date('c') . "\n");
         $messages[] = 'Installation complete!';
