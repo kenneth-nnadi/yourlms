@@ -1,10 +1,22 @@
-# YourLMS
+<p align="center">
+  <a href="https://github.com/kenneth-nnadi/yourlms">
+    <img src="assets/branding/yourlms.png" alt="YourLMS logo" width="200">
+  </a>
+</p>
 
-**A free, self-hosted learning management system — install in minutes, no command line required.**
+<h1 align="center">YourLMS</h1>
 
-YourLMS runs on your laptop or school server. Import a Canvas course, build modules, grade assignments, and keep teaching even when cloud platforms are down.
+<p align="center">
+  <strong>A free, self-hosted learning management system — install in minutes, no command line required.</strong>
+</p>
 
-**GitHub:** [github.com/kenneth-nnadi/yourlms](https://github.com/kenneth-nnadi/yourlms) · MIT License
+<p align="center">
+  Import a Canvas course, build modules, grade assignments, and keep teaching when cloud platforms are down.
+</p>
+
+<p align="center">
+  <a href="https://github.com/kenneth-nnadi/yourlms">github.com/kenneth-nnadi/yourlms</a> · MIT License
+</p>
 
 <p align="center">
   <img src="docs/images/login.png" alt="YourLMS login screen" width="720">

@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The format is based on 
 
 ### Added
 
+- YourLMS logo in README header and GitHub social preview image (`docs/images/social-preview.png`)
 - README screenshots (setup, login, dashboard, getting started, import)
 - [docs/docker.md](docs/docker.md) — Docker install guide
 - [docs/install-manual.md](docs/install-manual.md) — non-XAMPP / LAMP / nginx install
