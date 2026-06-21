@@ -6,6 +6,10 @@ YourLMS runs on your laptop or school server. Import a Canvas course, build modu
 
 **GitHub:** [github.com/kenneth-nnadi/yourlms](https://github.com/kenneth-nnadi/yourlms) · MIT License
 
+<p align="center">
+  <img src="docs/images/login.png" alt="YourLMS login screen" width="720">
+</p>
+
 ---
 
 ## Why we built this
@@ -27,22 +31,71 @@ You start with a **clean slate** — no pre-loaded courses. Import yours or buil
 
 ---
 
-## Install in 3 steps (XAMPP — easiest)
+## Choose how to install
+
+| Method | Best for | Guide |
+|--------|----------|-------|
+| **XAMPP** | Teachers, Windows/Mac, no terminal | [Below](#xampp-easiest) · [INSTALL.md](INSTALL.md) |
+| **Docker** | Developers, Linux servers, reproducible stacks | [docs/docker.md](docs/docker.md) |
+| **Manual (LAMP / nginx)** | Existing PHP + MySQL server | [docs/install-manual.md](docs/install-manual.md) |
+| **Shared hosting** | Cheap web host, no MySQL | `install.php` · [INSTALL.md](INSTALL.md#shared-hosting-no-mysql) |
+
+---
+
+## XAMPP (easiest)
 
 Designed for **non-technical users**. No terminal commands required.
 
+<p align="center">
+  <img src="docs/images/setup-install.png" alt="YourLMS setup wizard with database form" width="720">
+</p>
+
 1. **Download** this folder and place it in XAMPP’s `htdocs` as `yourlms`  
-   (Full path example: `C:\xampp\htdocs\yourlms` or `/Applications/XAMPP/htdocs/yourlms`)
+   (e.g. `C:\xampp\htdocs\yourlms` or `/Applications/XAMPP/xamppfiles/htdocs/yourlms`)
 
 2. **Start** Apache and MySQL in the XAMPP control panel.
 
-3. **Open** in your browser:  
-   `http://localhost/yourlms/setup.php`  
-   Enter database details (XAMPP defaults are pre-filled), click **Install now**, then follow **Getting started**.
+3. **Open** `http://localhost/yourlms/setup.php` — enter database details (XAMPP defaults are pre-filled), click **Install now**.
 
-That’s it. See [INSTALL.md](INSTALL.md) for screenshots-style detail and troubleshooting.
+Setup configures **up to 1 GB** course imports automatically. See [INSTALL.md](INSTALL.md) for troubleshooting.
 
-**Shared hosting (no MySQL)?** Use `install.php` instead — stores everything in one SQLite file.
+---
+
+## Docker
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine + Compose.
+
+```bash
+git clone https://github.com/kenneth-nnadi/yourlms.git
+cd yourlms
+bash deploy/debian-home/setup.sh
+```
+
+Then open **http://localhost:8080/** and log in. Full details: **[docs/docker.md](docs/docker.md)**.
+
+---
+
+## Manual install (no XAMPP)
+
+If you already run Apache/nginx, PHP, and MySQL on Linux or macOS:
+
+1. Clone or copy YourLMS into your web root
+2. Create a MySQL database and user
+3. Open **`/yourlms/setup.php`** in the browser and complete the wizard
+
+Step-by-step for Debian/Ubuntu, Homebrew, nginx, and Windows alternatives: **[docs/install-manual.md](docs/install-manual.md)**.
+
+---
+
+## Screenshots
+
+| Setup wizard | Dashboard |
+|:---:|:---:|
+| ![Setup](docs/images/setup-install.png) | ![Dashboard](docs/images/dashboard.png) |
+
+| Getting started | Import Canvas course |
+|:---:|:---:|
+| ![Getting started](docs/images/getting-started.png) | ![Import](docs/images/import-course.png) |
 
 ---
 
@@ -87,8 +140,10 @@ Optional later: [custom domain & SSL](docs/ssl-and-domain.md)
 
 | Guide | Description |
 |-------|-------------|
-| [INSTALL.md](INSTALL.md) | Step-by-step for non-technical installers |
-| [Getting started](getting-started.php) | In-app wizard after login |
+| [INSTALL.md](INSTALL.md) | XAMPP step-by-step for non-technical installers |
+| [docs/docker.md](docs/docker.md) | Docker install and daily commands |
+| [docs/install-manual.md](docs/install-manual.md) | Linux, Homebrew, nginx, shared hosting |
+| [docs/deployment.md](docs/deployment.md) | Production checklist and backups |
 | [docs/publishing.md](docs/publishing.md) | How students see your content |
 | [docs/ssl-and-domain.md](docs/ssl-and-domain.md) | HTTPS and custom domain (optional) |
 | [docs/architecture.md](docs/architecture.md) | Technical overview |
@@ -100,8 +155,8 @@ Optional later: [custom domain & SSL](docs/ssl-and-domain.md)
 ## Requirements
 
 - PHP 8.1+ (`mbstring`, `zip`, `pdo_mysql` or `pdo_sqlite`)
-- MySQL/MariaDB (XAMPP) **or** SQLite (shared hosting)
-- Apache or any PHP web server
+- MySQL/MariaDB (XAMPP, Docker, manual) **or** SQLite (shared hosting)
+- Apache, nginx, or Caddy
 
 ---
 

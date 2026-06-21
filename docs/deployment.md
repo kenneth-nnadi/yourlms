@@ -40,7 +40,13 @@ Do not commit `config.local.php` to git. Restart Apache after changes if the sit
 
 ## Docker
 
-See `deploy/debian-home/docker-compose.yml` for a containerized stack. Mount persistent volumes for `uploads/` and the database.
+See **[docker.md](docker.md)** for the full guide. Quick start from the repo root:
+
+```bash
+bash deploy/debian-home/setup.sh
+```
+
+Then open `http://localhost:8080/`. Data persists under `~/yourlms-debian/data/mysql/`; app code is mounted from your clone.
 
 ## Production checklist
 
