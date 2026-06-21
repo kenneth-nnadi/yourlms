@@ -2,13 +2,23 @@
 declare(strict_types=1);
 
 // Copy to config.local.php and customize for your host (not committed to git).
+// The setup wizard writes database settings here automatically on first install.
 return [
+    // Database — override XAMPP defaults or hosting provider credentials
+    'db' => [
+        'host' => '127.0.0.1',
+        'port' => 3306,
+        'name' => 'yourlms',
+        'user' => 'root',
+        'pass' => '',
+        'charset' => 'utf8mb4',
+    ],
+    // 'base_url' => '/yourlms',
     'session' => [
-        // Force secure cookies on HTTPS even if config.php has secure => false
         'secure' => true,
     ],
     'smtp' => [
-        'enabled' => true,
+        'enabled' => false,
         'host' => 'smtp.your-provider.com',
         'port' => 587,
         'secure' => 'tls',

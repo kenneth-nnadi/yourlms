@@ -50,7 +50,7 @@ function install_check_environment(?array $config = null): array
         $errors[] = 'The uploads/ folder must be writable by the web server.';
     }
     if (db_is_sqlite($config)) {
-        $dataDir = dirname(db_sqlite_path($config ?? config()));
+        $dataDir = dirname(db_sqlite_path($config));
         if (!is_dir($dataDir)) {
             @mkdir($dataDir, 0755, true);
         }
@@ -69,6 +69,109 @@ function install_write_config_local(array $overrides): bool
         $path,
         "<?php\n\ndeclare(strict_types=1);\n\nreturn {$export};\n"
     ) !== false;
+}
+
+function install_merge_config_local(array $overrides): bool
+{
+    $existing = [];
+    $path = dirname(__DIR__) . '/config.local.php';
+    if (is_file($path)) {
+        $loaded = require $path;
+        if (is_array($loaded)) {
+            $existing = $loaded;
+        }
+    }
+    $merged = array_replace_recursive($existing, $overrides);
+    if (array_key_exists('base_url', $merged) && ($merged['base_url'] === null || $merged['base_url'] === '')) {
+        unset($merged['base_url']);
+    }
+    return install_write_config_local($merged);
+}
+
+function install_sanitize_db_name(string $name): string
+{
+    return preg_replace('/[^a-zA-Z0-9_]/', '', $name) ?? '';
+}
+
+/** @return array{0: list<string>, 1: list<string>} */
+function install_mysql_setup(array $config): array
+{
+    $messages = [];
+    $errors = [];
+    $db = $config['db'] ?? [];
+    $dbName = install_sanitize_db_name((string) ($db['name'] ?? 'yourlms'));
+    if ($dbName === '') {
+        return [[], ['Enter a database name (letters, numbers, and underscores only).']];
+    }
+    if (($db['user'] ?? '') === '') {
+        return [[], ['Enter a MySQL username.']];
+    }
+
+    try {
+        $host = (string) ($db['host'] ?? '127.0.0.1');
+        $port = (int) ($db['port'] ?? 3306);
+        $charset = (string) ($db['charset'] ?? 'utf8mb4');
+        $user = (string) $db['user'];
+        $pass = (string) ($db['pass'] ?? '');
+
+        $serverDsn = sprintf('mysql:host=%s;port=%d;charset=%s', $host, $port, $charset);
+        $server = new PDO($serverDsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $server->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
+        $dbDsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $dbName, $charset);
+        $pdo = new PDO($dbDsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        db_apply_timezone($pdo, $config);
+
+        $tablesOnly = dirname(__DIR__) . '/database/schema-tables-only.sql';
+        if (!is_file($tablesOnly)) {
+            throw new RuntimeException('Missing database/schema-tables-only.sql');
+        }
+        install_run_sql_file($pdo, $tablesOnly);
+        $messages[] = "Database «{$dbName}» is ready.";
+
+        require_once __DIR__ . '/migrations.php';
+        run_migrations($pdo, $config);
+        $messages[] = 'Latest features applied.';
+
+        $count = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+        if ($count === 0) {
+            install_run_sql_file($pdo, dirname(__DIR__) . '/database/seed.sql');
+            $messages[] = 'Demo instructor and student accounts created.';
+        }
+
+        $uploadDir = $config['upload_dir'] ?? (dirname(__DIR__) . '/uploads');
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        @chmod($uploadDir, 0777);
+        $messages[] = 'Uploads folder is ready.';
+
+        $localOverrides = [
+            'db' => [
+                'host' => $host,
+                'port' => $port,
+                'name' => $dbName,
+                'user' => $user,
+                'pass' => $pass,
+                'charset' => $charset,
+            ],
+        ];
+        if (!empty($config['base_url'])) {
+            $localOverrides['base_url'] = $config['base_url'];
+        }
+        if (!install_merge_config_local($localOverrides)) {
+            $errors[] = 'Could not write config.local.php — check that this folder is writable.';
+        } else {
+            $messages[] = 'Database credentials saved to config.local.php.';
+        }
+
+        file_put_contents(dirname(__DIR__) . '/.setup-complete', date('c') . "\n");
+        $messages[] = 'Installation complete!';
+    } catch (Throwable $e) {
+        $errors[] = $e->getMessage();
+    }
+
+    return [$messages, $errors];
 }
 
 function install_run_sql_file(PDO $pdo, string $path): void

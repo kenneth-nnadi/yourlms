@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 function db_driver(?array $config = null): string
 {
-    $config ??= config();
-    return strtolower((string) ($config['db']['driver'] ?? 'mysql'));
+    if ($config === null && function_exists('config')) {
+        $config = config();
+    }
+    return strtolower((string) (($config ?? [])['db']['driver'] ?? 'mysql'));
 }
 
 function db_is_sqlite(?array $config = null): bool

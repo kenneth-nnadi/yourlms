@@ -83,5 +83,14 @@ render_page_header('Getting started', 'YourLMS');
       Instructor: <code>instructor@yourlms.test</code> · Student: <code>student@yourlms.test</code> · Password: <code>password123</code>
     </p>
   </div>
+
+  <div class="content-box" style="margin-top:16px;">
+    <h3 style="margin:0 0 8px;font-size:1rem;">Database settings</h3>
+    <p style="margin:0;font-size:14px;color:#475569;line-height:1.6;">
+      Install credentials are stored in <code>config.local.php</code> in your YourLMS folder.
+      To use a different database name, username, or password, edit the <code>db</code> section in that file.
+      <a href="<?= url('help.php?doc=install') ?>">Installation guide</a> has step-by-step details.
+    </p>
+  </div>
 </div>
 <?php render_app_shell_end(); ?>

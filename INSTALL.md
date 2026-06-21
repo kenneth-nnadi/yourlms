@@ -38,12 +38,20 @@ Both should show a green “Running” status.
 
 1. Open your web browser (Chrome, Firefox, Safari, or Edge).
 2. Go to: **`http://localhost/yourlms/setup.php`**
-3. Click the big **Install now** button.
-4. Wait for green success messages.
+3. Enter your **database details** (XAMPP defaults are pre-filled):
+   - **Database name:** `yourlms` (created automatically if it does not exist)
+   - **Username:** `root`
+   - **Password:** leave empty on a default XAMPP install
+   - **Host:** `127.0.0.1` · **Port:** `3306`
+   - **Site address path:** `/yourlms` (must match your folder name in `htdocs`)
+4. Click **Install now** and wait for green success messages.
+
+Your database credentials are saved to **`config.local.php`** in the YourLMS folder. To change them later, edit that file and restart Apache if the site stops connecting.
 
 If you see an error:
 
 - Make sure **MySQL is running** in XAMPP.
+- Double-check username, password, and database name.
 - On Mac, if uploads fail later, you may need to allow write access to the `uploads` folder (see troubleshooting below).
 
 ---
@@ -92,7 +100,8 @@ YourLMS works on `localhost` without any extra setup. When you want a real domai
 | Blank page or “connection refused” | Start Apache in XAMPP |
 | Database error on install | Start MySQL in XAMPP |
 | File uploads don’t work | Set `uploads` folder permissions to writable (777 on Mac XAMPP if needed) |
-| Wrong URL | Folder name must match `base_url` in `config.php` (default `/yourlms`) |
+| Wrong URL | Folder name must match **Site address path** on the setup form (default `/yourlms`) |
+| Wrong database password | Edit `config.local.php` → `db` section, or re-run setup after removing `.setup-complete` |
 | Already installed | Delete `.setup-complete` in the folder only if you want to re-run setup on a fresh database |
 
 ---

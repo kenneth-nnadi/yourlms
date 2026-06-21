@@ -11,11 +11,23 @@ YourLMS supports three common paths: **local XAMPP (MySQL)**, **shared hosting (
    mysql -u root yourlms < database/schema.sql
    mysql -u root yourlms < database/seed.sql
    ```
-3. Edit `config.php`:
-   - `base_url` → `/yourlms` (match your folder name)
-   - `db` host, name, user, password
-   - optional `timezone` (empty = auto-match MySQL system time)
-4. Open `http://localhost/yourlms/setup.php` once, or browse to the app (migrations run automatically).
+3. Open `http://localhost/yourlms/setup.php` and click **Install now**.
+4. Enter database name, username, and password (XAMPP defaults: database `yourlms`, user `root`, empty password). Settings are saved to `config.local.php`.
+
+### Change database credentials later
+
+Edit `config.local.php` in the project folder (created during setup):
+
+```php
+'db' => [
+    'host' => '127.0.0.1',
+    'name' => 'yourlms',
+    'user' => 'your_db_user',
+    'pass' => 'your_db_password',
+],
+```
+
+Do not commit `config.local.php` to git. Restart Apache after changes if the site stops connecting.
 5. Make `uploads/` writable: `chmod -R 775 uploads` (or `777` on restrictive Mac/XAMPP setups).
 6. **Change demo passwords** before sharing the network.
 
