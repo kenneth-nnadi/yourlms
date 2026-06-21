@@ -31,7 +31,7 @@ return [
         'charset' => 'utf8mb4',
     ],
     'upload_dir' => __DIR__ . '/uploads',
-    'upload_max_mb' => 50,
+    'upload_max_mb' => 1024,
     'allow_self_registration' => false,
     'session' => [
         'secure' => false,

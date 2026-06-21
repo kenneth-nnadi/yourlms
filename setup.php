@@ -103,7 +103,7 @@ $base = rtrim($form['base_url'] !== '' ? $form['base_url'] : ($config['base_url'
       <ol style="font-size:14px;color:#475569;line-height:1.7;padding-left:20px;margin:0 0 20px;">
         <li>Start <strong>Apache</strong> and <strong>MySQL</strong> in XAMPP.</li>
         <li>Enter your database details below (XAMPP defaults are pre-filled).</li>
-        <li>Click <strong>Install now</strong>, then log in and import your course.</li>
+        <li>Click <strong>Install now</strong> — setup configures PHP for <strong>up to 1 GB</strong> course imports automatically.</li>
       </ol>
       <?php foreach ($errors as $e): ?>
         <div class="flash flash-error" style="border-radius:8px;margin-bottom:8px;"><?= htmlspecialchars($e) ?></div>

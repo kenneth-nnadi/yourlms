@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/sql_compat.php';
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/install_php.php';
 
 function install_lock_file(): string
 {
@@ -150,6 +151,12 @@ function install_mysql_setup(array $config): array
         @chmod($uploadDir, 0777);
         $messages[] = 'Uploads folder is ready.';
 
+        [$phpMessages, $phpErrors] = install_configure_upload_limits();
+        $messages = array_merge($messages, $phpMessages);
+        if ($phpErrors) {
+            throw new RuntimeException(implode(' ', $phpErrors));
+        }
+
         $localOverrides = [
             'db' => [
                 'host' => $host,
@@ -163,6 +170,8 @@ function install_mysql_setup(array $config): array
         if (!empty($config['base_url'])) {
             $localOverrides['base_url'] = $config['base_url'];
         }
+        $budget = install_resolve_upload_budget();
+        $localOverrides['upload_max_mb'] = $budget['upload_mb'];
         if (!install_merge_config_local($localOverrides)) {
             throw new RuntimeException('Could not write config.local.php — the YourLMS folder must be writable by the web server.');
         }

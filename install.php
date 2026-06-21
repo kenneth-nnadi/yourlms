@@ -47,8 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$done && !$envErrors) {
         [$messages, $dbErrors] = install_run_database_setup($config);
         $errors = array_merge($errors, $dbErrors);
         if (!$dbErrors) {
-            install_finalize();
-            $done = true;
+            [$phpMessages, $phpErrors] = install_configure_upload_limits();
+            $messages = array_merge($messages, $phpMessages);
+            $errors = array_merge($errors, $phpErrors);
+            if (!$phpErrors) {
+                install_finalize();
+                $done = true;
+            }
         }
     }
 }

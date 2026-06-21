@@ -58,3 +58,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !defined('API_REQUEST')) {
 }
 
 ensure_upload_dir($config['upload_dir']);
+
+if (!is_file(dirname(__DIR__) . '/.upload-limits-applied') && is_file(dirname(__DIR__) . '/.setup-complete')) {
+    require_once __DIR__ . '/install_php.php';
+    install_configure_upload_limits();
+}

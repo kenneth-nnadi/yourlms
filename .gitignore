@@ -6,6 +6,8 @@ config.local.php
 includes/branding.local.php
 .install-lock
 .setup-complete
+.upload-limits-applied
+.user.ini
 vendor/
 composer.lock
 *.zip

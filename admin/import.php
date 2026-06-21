@@ -9,6 +9,8 @@ $lastReport = $_SESSION['import_report'] ?? null;
 unset($_SESSION['import_report']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    @ini_set('memory_limit', '1280M');
+    @ini_set('max_execution_time', '600');
     try {
         $mode = $_POST['import_mode'] ?? 'new';
         $targetCourseId = $mode === 'existing' ? (int) ($_POST['target_course_id'] ?? 0) : null;
@@ -20,8 +22,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $zipPath = null;
         if (!empty($_FILES['imscc']['tmp_name'])) {
+            $maxMb = (int) ($config['upload_max_mb'] ?? 1024);
+            $file = $_FILES['imscc'];
+            if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
+                throw new RuntimeException(
+                    'File exceeds server limit (' . (ini_get('upload_max_filesize') ?: 'unknown') . '). '
+                    . 'Re-run setup or contact your host to raise upload_max_filesize and post_max_size.'
+                );
+            }
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                throw new RuntimeException('Upload failed (error code ' . (int) $file['error'] . ').');
+            }
+            if ($file['size'] > $maxMb * 1024 * 1024) {
+                throw new RuntimeException("File exceeds the {$maxMb} MB application limit.");
+            }
             $zipPath = $config['upload_dir'] . '/import_upload_' . bin2hex(random_bytes(4)) . '.zip';
-            move_uploaded_file($_FILES['imscc']['tmp_name'], $zipPath);
+            if (!move_uploaded_file($file['tmp_name'], $zipPath)) {
+                throw new RuntimeException('Could not save uploaded file — check that uploads/ is writable.');
+            }
         }
 
         if ($zipPath) {
@@ -104,7 +122,8 @@ render_app_shell_start($user, 'admin', '/admin/index.php');
 
   <p style="font-size:13px;color:#71717a;margin-top:20px;">
     In Canvas: <strong>Settings → Export Course Contents</strong> to download an IMS Common Cartridge <code>.zip</code>, then upload it here.
-    Server upload limit: <strong><?= e(ini_get('upload_max_filesize') ?: 'unknown') ?></strong>.
+    Server upload limit: <strong><?= e(ini_get('upload_max_filesize') ?: 'unknown') ?></strong>
+    (app limit <?= (int) ($config['upload_max_mb'] ?? 1024) ?> MB).
   </p>
 </div>
 <script>
