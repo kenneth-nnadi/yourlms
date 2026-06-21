@@ -15,14 +15,16 @@ YourLMS is a monolithic PHP application with server-rendered HTML, a thin JSON A
 ## Request flow
 
 ```
-Browser → index.php / *.php page
+Browser → /yourlms/login.php (routed to public/login.php)
         → includes/bootstrap.php (config, session, PDO, migrations)
         → auth + role checks
         → page logic + includes/layout.php shell
         → HTML response
 ```
 
-Admin/teach tools live under `admin/`. Course-facing pages (`assignment.php`, `quiz.php`, etc.) share course navigation via `render_course_shell_start()`.
+The web root is `public/`. Apache/nginx rewrites requests so URLs stay `/yourlms/...` without exposing `includes/`, `database/`, or `config.php`.
+
+Admin/teach tools live under `public/admin/`. Course-facing pages (`assignment.php`, `quiz.php`, etc.) share course navigation via `render_course_shell_start()`.
 
 ## Data model (simplified)
 
@@ -62,10 +64,11 @@ Submissions, quiz attempts, and enrollments are **not** included in course expor
 
 | Path | Role |
 |------|------|
+| `public/` | Web root — PHP pages, `admin/`, `api/`, `assets/` |
 | `includes/` | Bootstrap, auth, helpers, migrations, notifications, import/export |
-| `admin/` | Teach hub (content, people, grades, import) |
 | `database/` | Schema and seed SQL |
-| `uploads/` | Runtime file storage (gitignored) |
+| `uploads/` | Runtime file storage (gitignored, outside `public/`) |
+| `config.php` | Default configuration (outside `public/`) |
 | `tests/` | Smoke and HTTP integration audits |
 
 ## Extending safely

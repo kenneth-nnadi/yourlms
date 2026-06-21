@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/kenneth-nnadi/yourlms">
-    <img src="assets/branding/yourlms.png" alt="YourLMS logo" width="200">
+    <img src="public/assets/branding/yourlms.png" alt="YourLMS logo" width="200">
   </a>
 </p>
 
@@ -40,6 +40,22 @@ When the **Oregon NICE Teachers Summer Workshop** came around in 2026, we still 
 - Keep teaching when SaaS platforms are unavailable
 
 You start with a **clean slate** — no pre-loaded courses. Import yours or build from scratch.
+
+---
+
+## Project layout
+
+```
+yourlms/
+  public/          ← web pages (login, courses, admin, assets)
+  includes/        ← application code (not web-accessible)
+  database/        ← SQL schema
+  docs/            ← guides and screenshots
+  config.php       ← defaults (override in config.local.php)
+  public/setup.php ← browser installer (URL: /yourlms/setup.php)
+```
+
+GitHub shows these folders at the top instead of dozens of loose PHP files. URLs stay the same: `http://localhost/yourlms/login.php`.
 
 ---
 

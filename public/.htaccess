@@ -1,0 +1,35 @@
+Options -Indexes +FollowSymLinks
+
+# BEGIN YourLMS upload limits
+<IfModule mod_php.c>
+  php_value upload_max_filesize 1024M
+  php_value post_max_size 1024M
+  php_value memory_limit 1280M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+<IfModule mod_php8.c>
+  php_value upload_max_filesize 1024M
+  php_value post_max_size 1024M
+  php_value memory_limit 1280M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+<IfModule mod_php5.c>
+  php_value upload_max_filesize 1024M
+  php_value post_max_size 1024M
+  php_value memory_limit 1280M
+  php_value max_execution_time 600
+  php_value max_input_time 600
+</IfModule>
+# END YourLMS upload limits
+
+# Apache/CGI often strips Authorization before PHP — required for API Bearer tokens.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+<IfModule mod_setenvif.c>
+  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+</IfModule>

@@ -224,11 +224,11 @@ function install_configure_upload_limits(): array
         $messages[] = "Note: {$freeGb} GB free on disk — keep at least 1 GB free for large course imports.";
     }
 
-    $htaccess = $root . '/.htaccess';
-    if (install_write_htaccess_limits($htaccess, $directives)) {
-        $messages[] = 'Apache upload limits set to ' . $directives['upload_max_filesize'] . ' via .htaccess.';
+    $publicHtaccess = $root . '/public/.htaccess';
+    if (install_write_htaccess_limits($publicHtaccess, $directives)) {
+        $messages[] = 'Apache upload limits set to ' . $directives['upload_max_filesize'] . ' via public/.htaccess.';
     } else {
-        $errors[] = 'Could not update .htaccess upload limits — check folder permissions.';
+        $errors[] = 'Could not update public/.htaccess upload limits — check folder permissions.';
     }
 
     if (install_write_user_ini($root, $directives)) {

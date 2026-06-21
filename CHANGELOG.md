@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format is based on 
 
 ## [Unreleased]
 
+### Changed
+
+- **Project structure:** web files moved under `public/`; app code stays in `includes/`, `database/`, `docs/`
+- Root `.htaccess` routes `/yourlms/*` into `public/` so install URLs are unchanged
+
 ### Added
 
 - YourLMS logo in README header and GitHub social preview image (`docs/images/social-preview.png`)

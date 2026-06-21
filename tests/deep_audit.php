@@ -91,15 +91,16 @@ $ims = $root . '/docs/samples/sample.imscc.zip';
 $record('Import/Export', 'IMS sample package bundled', is_file($ims) ? 'PASS' : 'WARN', is_file($ims) ? basename($ims) : 'zip not in project root');
 
 // Rich editor
-$record('Content', 'Quill rich text editor', is_file($root . '/assets/js/rich-editor.js') ? 'PASS' : 'FAIL');
+$record('Content', 'Quill rich text editor', is_file($root . '/public/assets/js/rich-editor.js') ? 'PASS' : 'FAIL');
 $record('Content', 'Module pages from IMS import', (int) $pdo->query("SELECT COUNT(*) FROM module_items WHERE item_type='page'")->fetchColumn() > 0 ? 'PASS' : 'WARN');
 
 // Security files
+$record('Structure', 'public web root', is_dir($root . '/public') && is_file($root . '/public/index.php') ? 'PASS' : 'FAIL');
 $record('Security', 'CSRF protection module', is_file($root . '/includes/csrf.php') ? 'PASS' : 'FAIL');
 $record('Security', 'Rate limiting module', is_file($root . '/includes/security.php') ? 'PASS' : 'FAIL');
 
 // Mobile
-$css = file_get_contents($root . '/assets/css/style.css') ?: '';
+$css = file_get_contents($root . '/public/assets/css/style.css') ?: '';
 $record('Mobile UI', 'Responsive CSS breakpoints', str_contains($css, 'site-menu-toggle') && str_contains($css, '@media (max-width: 768px)') ? 'PASS' : 'FAIL');
 $layout = file_get_contents($root . '/includes/layout.php') ?: '';
 $record('Mobile UI', 'Hamburger in layout', str_contains($layout, 'site-menu-toggle') ? 'PASS' : 'FAIL');

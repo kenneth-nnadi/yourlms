@@ -59,7 +59,7 @@ function app_logo_upload_relative_path(): ?string
 
 function app_default_logo_relative_path(): ?string
 {
-    $full = dirname(__DIR__) . '/' . APP_DEFAULT_LOGO;
+    $full = public_root() . '/' . APP_DEFAULT_LOGO;
     return is_file($full) ? APP_DEFAULT_LOGO : null;
 }
 

@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-$config = require dirname(__DIR__) . '/config.php';
+require_once __DIR__ . '/paths.php';
 
-$configLocal = dirname(__DIR__) . '/config.local.php';
+$config = require app_root() . '/config.php';
+
+$configLocal = app_root() . '/config.local.php';
 if (is_file($configLocal)) {
     $localOverrides = require $configLocal;
     if (is_array($localOverrides)) {
@@ -59,7 +61,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !defined('API_REQUEST')) {
 
 ensure_upload_dir($config['upload_dir']);
 
-if (!is_file(dirname(__DIR__) . '/.upload-limits-applied') && is_file(dirname(__DIR__) . '/.setup-complete')) {
+if (!is_file(app_root() . '/.upload-limits-applied') && is_file(app_root() . '/.setup-complete')) {
     require_once __DIR__ . '/install_php.php';
     install_configure_upload_limits();
 }

@@ -1,50 +1,10 @@
 Options -Indexes +FollowSymLinks
 
-# BEGIN YourLMS upload limits
-<IfModule mod_php.c>
-  php_value upload_max_filesize 1024M
-  php_value post_max_size 1024M
-  php_value memory_limit 1280M
-  php_value max_execution_time 600
-  php_value max_input_time 600
-</IfModule>
-<IfModule mod_php8.c>
-  php_value upload_max_filesize 1024M
-  php_value post_max_size 1024M
-  php_value memory_limit 1280M
-  php_value max_execution_time 600
-  php_value max_input_time 600
-</IfModule>
-<IfModule mod_php5.c>
-  php_value upload_max_filesize 1024M
-  php_value post_max_size 1024M
-  php_value memory_limit 1280M
-  php_value max_execution_time 600
-  php_value max_input_time 600
-</IfModule>
-# END YourLMS upload limits
-
-# Apache/CGI often strips Authorization before PHP — required for API Bearer tokens.
+# Send all web traffic into public/ — URLs stay /yourlms/login.php (not /yourlms/public/...)
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteCond %{HTTP:Authorization} .
-  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-</IfModule>
-<IfModule mod_setenvif.c>
-  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
-</IfModule>
-
-# Block direct web access to local config (Apache 2.4+)
-<IfModule mod_authz_core.c>
-  <FilesMatch "^(config\.local\.php|config\.php|\.install-lock)$">
-    Require all denied
-  </FilesMatch>
-</IfModule>
-
-# Apache 2.2 fallback
-<IfModule !mod_authz_core.c>
-  <FilesMatch "^(config\.local\.php|config\.php|\.install-lock)$">
-    Order allow,deny
-    Deny from all
-  </FilesMatch>
+  RewriteRule ^public/ - [L]
+  RewriteRule ^(config\.php|config\.local\.php|composer\.(json|lock)|\.env|\.git) - [F,L]
+  RewriteRule ^(includes|database|data|deploy|tests|docs|scripts|vendor)(/|$) - [F,L]
+  RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
