@@ -19,6 +19,32 @@ function csrf_request_path(): string
     return $uri;
 }
 
+function csrf_ini_size_bytes(string $value): int
+{
+    $value = trim($value);
+    if ($value === '') {
+        return 0;
+    }
+    $unit = strtolower($value[strlen($value) - 1]);
+    $number = (float) $value;
+    return (int) match ($unit) {
+        'g' => $number * 1024 * 1024 * 1024,
+        'm' => $number * 1024 * 1024,
+        'k' => $number * 1024,
+        default => $number,
+    };
+}
+
+function csrf_post_exceeded_limit(): bool
+{
+    $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+    if ($contentLength <= 0) {
+        return false;
+    }
+    $postMax = csrf_ini_size_bytes((string) ini_get('post_max_size'));
+    return $postMax > 0 && $contentLength > $postMax;
+}
+
 function csrf_exempt_paths(): array
 {
     return [
@@ -41,7 +67,15 @@ function verify_csrf(): void
         return;
     }
     $token = $_POST['csrf_token'] ?? '';
-    if (!is_string($token) || !hash_equals(csrf_token(), $token)) {
+    if (!is_string($token) || $token === '' || !hash_equals(csrf_token(), $token)) {
+        if (csrf_post_exceeded_limit() || ($token === '' && empty($_POST) && empty($_FILES))) {
+            $limit = ini_get('post_max_size') ?: 'unknown';
+            http_response_code(413);
+            die(
+                'Upload too large for this server (PHP post_max_size is ' . $limit . '). '
+                . 'Increase post_max_size and upload_max_filesize in php.ini, or export a smaller course package.'
+            );
+        }
         http_response_code(403);
         die('Invalid or missing security token. Please go back and try again.');
     }

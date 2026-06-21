@@ -90,6 +90,7 @@ render_app_shell_start($user, 'admin', '/admin/index.php');
 
   <div class="content-box" style="margin:24px 0;background:#fafafa;">
     <form method="post" enctype="multipart/form-data">
+      <?php render_csrf_field(); ?>
       <div class="form-group">
         <label>Export file (.zip or .json)</label>
         <input type="file" name="package" accept=".zip,.json,application/json" required>

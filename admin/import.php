@@ -69,6 +69,7 @@ render_app_shell_start($user, 'admin', '/admin/index.php');
 
   <div class="content-box" style="margin:24px 0;background:#fafafa;">
     <form method="post" enctype="multipart/form-data">
+      <?php render_csrf_field(); ?>
       <div class="form-group">
         <label>IMS CC zip file</label>
         <input type="file" name="imscc" accept=".zip,.imscc" required>
@@ -103,6 +104,7 @@ render_app_shell_start($user, 'admin', '/admin/index.php');
 
   <p style="font-size:13px;color:#71717a;margin-top:20px;">
     In Canvas: <strong>Settings → Export Course Contents</strong> to download an IMS Common Cartridge <code>.zip</code>, then upload it here.
+    Server upload limit: <strong><?= e(ini_get('upload_max_filesize') ?: 'unknown') ?></strong>.
   </p>
 </div>
 <script>

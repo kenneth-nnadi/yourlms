@@ -1,5 +1,19 @@
 Options -Indexes +FollowSymLinks
 
+# Course imports (IMS CC) are often large — raise limits when mod_php allows php_value.
+<IfModule mod_php.c>
+  php_value upload_max_filesize 256M
+  php_value post_max_size 256M
+  php_value max_execution_time 300
+  php_value max_input_time 300
+</IfModule>
+<IfModule mod_php8.c>
+  php_value upload_max_filesize 256M
+  php_value post_max_size 256M
+  php_value max_execution_time 300
+  php_value max_input_time 300
+</IfModule>
+
 # Apache/CGI often strips Authorization before PHP — required for API Bearer tokens.
 <IfModule mod_rewrite.c>
   RewriteEngine On
