@@ -38,7 +38,7 @@ Designed for **non-technical users**. No terminal commands required.
 
 3. **Open** in your browser:  
    `http://localhost/yourlms/setup.php`  
-   Click **Install now**, then follow the **Getting started** guide.
+   Enter database details (XAMPP defaults are pre-filled), click **Install now**, then follow **Getting started**.
 
 That’s it. See [INSTALL.md](INSTALL.md) for screenshots-style detail and troubleshooting.
 

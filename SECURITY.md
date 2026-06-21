@@ -8,7 +8,9 @@ Security fixes are applied to the latest release on the default branch. Self-hos
 
 **Please do not open public GitHub issues for security vulnerabilities.**
 
-Email the maintainers with:
+Report privately via [GitHub Security Advisories](https://github.com/kennethnnadi/yourlms/security/advisories/new) (preferred once the repository is published). You can also message the repository owner through GitHub if advisory reporting is not yet enabled.
+
+Include:
 
 - Description of the issue and impact
 - Steps to reproduce

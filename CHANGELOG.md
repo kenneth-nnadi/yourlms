@@ -21,5 +21,18 @@ All notable changes to this project are documented here. The format is based on 
 
 - CSRF protection, rate limiting, security headers, upload path checks
 - Documented security reporting process (`SECURITY.md`)
+- Server-side CSRF tokens on course import forms
+
+### Fixed
+
+- XAMPP setup wizard `config()` error during install
+- Database credential form on `setup.php` with `config.local.php` persistence
+- Writable-folder checks before marking installation complete
+- Misleading CSRF error when uploads exceeded PHP size limits
+
+### Changed
+
+- Setup auto-configures up to **1 GB** course import limits (`.htaccess`, `.user.ini`, `php.ini` when writable)
+- Default application upload limit raised to 1024 MB
 
 [1.0.0]: https://github.com/kennethnnadi/yourlms/releases/tag/v1.0.0
