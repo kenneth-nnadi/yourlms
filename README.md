@@ -4,7 +4,7 @@
 
 YourLMS runs on your laptop or school server. Import a Canvas course, build modules, grade assignments, and keep teaching even when cloud platforms are down.
 
-**GitHub:** [github.com/kennethnnadi/yourlms](https://github.com/kennethnnadi/yourlms) · MIT License
+**GitHub:** [github.com/kenneth-nnadi/yourlms](https://github.com/kenneth-nnadi/yourlms) · MIT License
 
 ---
 

@@ -118,4 +118,4 @@ YourLMS works on `localhost` without any extra setup. When you want a real domai
 
 ## Need help?
 
-Open an issue at [github.com/kennethnnadi/yourlms](https://github.com/kennethnnadi/yourlms/issues).
+Open an issue at [github.com/kenneth-nnadi/yourlms](https://github.com/kenneth-nnadi/yourlms/issues).

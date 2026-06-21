@@ -35,4 +35,4 @@ All notable changes to this project are documented here. The format is based on 
 - Setup auto-configures up to **1 GB** course import limits (`.htaccess`, `.user.ini`, `php.ini` when writable)
 - Default application upload limit raised to 1024 MB
 
-[1.0.0]: https://github.com/kennethnnadi/yourlms/releases/tag/v1.0.0
+[1.0.0]: https://github.com/kenneth-nnadi/yourlms/releases/tag/v1.0.0
