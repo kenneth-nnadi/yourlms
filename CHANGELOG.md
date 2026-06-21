@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.1.0] - 2026-06-21
 
 ### Changed
 
@@ -15,6 +15,8 @@ All notable changes to this project are documented here. The format is based on 
 - README screenshots (setup, login, dashboard, getting started, import)
 - [docs/docker.md](docs/docker.md) — Docker install guide
 - [docs/install-manual.md](docs/install-manual.md) — non-XAMPP / LAMP / nginx install
+
+[1.1.0]: https://github.com/kenneth-nnadi/yourlms/releases/tag/v1.1.0
 
 ## [1.0.0] - 2026-06-21
 
