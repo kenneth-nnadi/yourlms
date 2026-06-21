@@ -1,0 +1,16 @@
+uploads/*
+!uploads/.htaccess
+import-temp/
+.DS_Store
+config.local.php
+includes/branding.local.php
+.install-lock
+.setup-complete
+vendor/
+composer.lock
+*.zip
+!docs/samples/.gitkeep
+deploy/debian-home/data/
+data/*.sqlite
+data/*.sqlite-*
+.phpunit.result.cache

@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+// Shared hosting at public_html/yourlms — no MySQL, no cPanel.
+// Or run install.php once in the browser (recommended).
+
+return [
+    'base_url' => '/yourlms',
+    'db' => [
+        'driver' => 'sqlite',
+        'sqlite_path' => __DIR__ . '/data/yourlms.sqlite',
+    ],
+];

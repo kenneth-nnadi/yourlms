@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+
+// Copy to config.local.php and customize for your host (not committed to git).
+return [
+    'session' => [
+        // Force secure cookies on HTTPS even if config.php has secure => false
+        'secure' => true,
+    ],
+    'smtp' => [
+        'enabled' => true,
+        'host' => 'smtp.your-provider.com',
+        'port' => 587,
+        'secure' => 'tls',
+        'user' => 'your-smtp-user',
+        'pass' => 'your-smtp-password',
+        'from' => 'noreply@your-school.edu',
+        'from_name' => 'YourLMS',
+    ],
+];

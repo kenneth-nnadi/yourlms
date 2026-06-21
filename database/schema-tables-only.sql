@@ -1,0 +1,195 @@
+-- YourLMS tables only (shared hosting — database must already exist in cPanel/phpMyAdmin)
+
+CREATE TABLE users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) DEFAULT NULL UNIQUE,
+  username VARCHAR(64) DEFAULT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  role ENUM('instructor', 'student', 'ta', 'guest') NOT NULL DEFAULT 'student',
+  admin_managed_password TINYINT(1) NOT NULL DEFAULT 0,
+  password_reset_token VARCHAR(64) DEFAULT NULL,
+  password_reset_expires DATETIME DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE courses (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(32) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  term VARCHAR(64) DEFAULT NULL,
+  description TEXT,
+  color VARCHAR(16) DEFAULT '#0055a4',
+  published TINYINT(1) NOT NULL DEFAULT 0,
+  created_by INT UNSIGNED DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE enrollments (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  role ENUM('instructor', 'student', 'ta', 'guest') NOT NULL DEFAULT 'student',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_enrollment (course_id, user_id),
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE modules (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  position INT NOT NULL DEFAULT 0,
+  published TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE module_items (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  module_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  item_type ENUM('page','assignment','quiz','discussion','announcement','external','file','lti') NOT NULL,
+  content LONGTEXT,
+  content_format ENUM('text','html') NOT NULL DEFAULT 'text',
+  canvas_identifier VARCHAR(64) DEFAULT NULL,
+  ref_id INT UNSIGNED DEFAULT NULL,
+  file_path VARCHAR(512) DEFAULT NULL,
+  points DECIMAL(8,2) DEFAULT NULL,
+  due_at DATETIME DEFAULT NULL,
+  position INT NOT NULL DEFAULT 0,
+  published TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (module_id) REFERENCES modules(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE assignment_groups (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  weight DECIMAL(5,2) NOT NULL DEFAULT 0,
+  position INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE assignments (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  group_id INT UNSIGNED DEFAULT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  description_format ENUM('text','html') NOT NULL DEFAULT 'text',
+  due_at DATETIME DEFAULT NULL,
+  points DECIMAL(8,2) NOT NULL DEFAULT 100,
+  lock_after_due TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  FOREIGN KEY (group_id) REFERENCES assignment_groups(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE submissions (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  assignment_id INT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  content TEXT,
+  file_path VARCHAR(512) DEFAULT NULL,
+  file_name VARCHAR(255) DEFAULT NULL,
+  is_late TINYINT(1) NOT NULL DEFAULT 0,
+  submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  grade DECIMAL(8,2) DEFAULT NULL,
+  feedback TEXT,
+  graded_at DATETIME DEFAULT NULL,
+  UNIQUE KEY uq_submission (assignment_id, user_id),
+  FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE quizzes (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  points DECIMAL(8,2) NOT NULL DEFAULT 25,
+  due_at DATETIME DEFAULT NULL,
+  max_attempts INT UNSIGNED NOT NULL DEFAULT 1,
+  lock_after_due TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE quiz_questions (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT UNSIGNED NOT NULL,
+  question TEXT NOT NULL,
+  question_type ENUM('choice','essay','true_false','multi_select','matching') NOT NULL DEFAULT 'choice',
+  choices JSON NOT NULL,
+  correct_index INT NOT NULL DEFAULT 0,
+  points DECIMAL(8,2) DEFAULT NULL,
+  position INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE quiz_attempts (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  answers JSON NOT NULL,
+  score DECIMAL(8,2) NOT NULL DEFAULT 0,
+  essay_scores JSON DEFAULT NULL,
+  needs_grading TINYINT(1) NOT NULL DEFAULT 0,
+  submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE discussions (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  prompt TEXT,
+  prompt_format ENUM('text','html') NOT NULL DEFAULT 'text',
+  created_by INT UNSIGNED DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE discussion_posts (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  discussion_id INT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  parent_id INT UNSIGNED DEFAULT NULL,
+  content TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (discussion_id) REFERENCES discussions(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_id) REFERENCES discussion_posts(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE announcements (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  body TEXT NOT NULL,
+  body_format ENUM('text','html') NOT NULL DEFAULT 'text',
+  published TINYINT(1) NOT NULL DEFAULT 1,
+  created_by INT UNSIGNED DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE course_files (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  course_id INT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  file_path VARCHAR(512) NOT NULL,
+  mime_type VARCHAR(128) DEFAULT NULL,
+  uploaded_by INT UNSIGNED DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;

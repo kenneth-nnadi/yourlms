@@ -1,0 +1,45 @@
+# YourLMS — Debian + Apache + PHP + MariaDB in a home-directory install.
+# Paths are filled in by setup.sh (APP_ROOT, INSTALL_DIR).
+
+services:
+  app:
+    build:
+      context: ${APP_ROOT}/deploy/debian-home
+      dockerfile: Dockerfile
+    image: yourlms-debian-app:local
+    restart: unless-stopped
+    ports:
+      - "${YOURLMS_PORT:-8080}:80"
+    volumes:
+      - ${APP_ROOT}:/var/www/html
+      - ${INSTALL_DIR}/config.local.php:/var/www/html/config.local.php:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - yourlms
+
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: yourlms
+      MYSQL_USER: yourlms
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ${INSTALL_DIR}/data/mysql:/var/lib/mysql
+      - ${APP_ROOT}/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ${APP_ROOT}/database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - yourlms
+
+networks:
+  yourlms:
+    driver: bridge

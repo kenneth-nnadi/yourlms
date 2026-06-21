@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_sqlite, zip
+          coverage: none
+
+      - name: Smoke tests
+        run: php tests/run.php
+
+      - name: Install PHPUnit
+        run: composer install --no-interaction --prefer-dist
+
+      - name: PHPUnit
+        run: composer test
+
+      - name: PHP syntax check (includes)
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
