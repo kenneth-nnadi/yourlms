@@ -32,7 +32,7 @@ Among the programs hit was the **NICE cybersecurity curriculum** used to train h
 
 When the **Oregon NICE Teachers Summer Workshop** came around in 2026, we still had teachers in the room and a program to deliver — but no Canvas. We needed something that worked locally, under our control, and on short notice.
 
-**Kenneth Nnadi** and **Dan Carrere** built YourLMS as that alternative. We are open-sourcing it so any educator can:
+we built YourLMS as that alternative. We are open-sourcing it so any educator can:
 
 - Install their own LMS **free of charge**
 - Host curriculum on hardware they control
@@ -192,7 +192,6 @@ Optional later: [custom domain & SSL](docs/ssl-and-domain.md)
 
 Created for the **Oregon NICE Teachers Summer Workshop**, 2026 — when educators needed to keep teaching without the cloud.
 
-**Kenneth Nnadi** · **Dan Carrere** · open-source contributors
 
 ## License
 
