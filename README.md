@@ -155,7 +155,7 @@ Optional later: [custom domain & SSL](docs/ssl-and-domain.md)
 ## Features
 
 - Courses, modules, pages, files, assignments, quizzes, discussions
-- Canvas-style **Go live** publishing and student preview
+- Advance-style **Go live** publishing and student preview
 - IMS Common Cartridge import + JSON/ZIP backup/restore
 - Gradebook, rubrics, weighted assignment groups
 - In-app notifications (optional SMTP email)
